@@ -1,8 +1,47 @@
-const http = require('http');
+let http = require('http');
+let fs = require('fs');
 
 http.createServer(function(request, response) {
-  response.writeHead(404, {'Content-Type': 'text/html'});
-  response.end('<!DOCTYPE html><html><head><title>Mis insectos</title></head><body><h1>404</h1><p>El sitio no se encuentra disponible</p><p>Mientras tanto te dejo una mosca muerta</p><img src="/public/mosca.jpg"></body></html>');
-}).listen(process.env.PORT);
-
-console.log('App is running...');
+    if (request.url == '/index.html' || request.url == '/') {
+      response.writeHead(200, {
+          'Content-Type': 'text/html'
+      });
+      fs.readFile('./public/index.html', null, function (error, data) {
+          if (error) {
+              response.writeHead(404);
+              respone.write('Whoops! File not found!');
+          } else {
+              response.write(data);
+          }
+          response.end();
+      });
+    } else if (request.url == '/mosca.jpg') {
+      response.writeHead(200, {
+          'Content-Type': 'image/jpeg'
+      });
+      fs.readFile('./public/mosca.jpg', null, function (error, data) {
+          if (error) {
+              response.writeHead(404);
+              respone.write('Whoops! File not found!');
+          } else {
+              response.write(data);
+          }
+          response.end();
+      });
+    } else {
+      response.writeHead(404, {
+          'Content-Type': 'text/html'
+      });
+      fs.readFile('./public/404.html', null, function (error, data) {
+          if (error) {
+              response.writeHead(404, {
+                  'Content-Type': 'text/plain'
+              });
+              respone.write('404\nSitio en construccion');
+          } else {
+              response.write(data);
+          }
+          response.end();
+      });
+    }
+}).listen(3000);
